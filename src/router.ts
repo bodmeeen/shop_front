@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from './components/HomePage.vue'
-import AdminPage from './components/AdminPage.vue' // Імпортуємо нову сторінку
+import AdminPage from './components/AdminPage.vue'
 
 const routes = [
   {

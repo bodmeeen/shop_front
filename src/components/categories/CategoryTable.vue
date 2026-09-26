@@ -10,19 +10,15 @@
           <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
             <th class="p-3 border-b border-gray-200 font-semibold">ID</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Назва</th>
-            <th class="p-3 border-b border-gray-200 font-semibold">Опис</th>
-            <th class="p-3 border-b border-gray-200 font-semibold">Стара ціна</th>
-            <th class="p-3 border-b border-gray-200 font-semibold">Ціна</th>
+            <th class="p-3 border-b border-gray-200 font-semibold">Посилання на картинку</th>
           </tr>
         </thead>
         <!-- divide-y автоматично малює горизонтальні лінії між рядками таблиці -->
         <tbody class="divide-y divide-gray-200">
-          <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50 transition-colors">
-            <td class="p-3 text-gray-500">{{ product.id }}</td>
-            <td class="p-3 font-medium text-gray-900">{{ product.title }}</td>
-            <td class="p-3 text-gray-600">{{ product.body }}</td>
-            <td class="p-3 text-gray-500 ">{{ product.old_price }}</td>
-            <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
+          <tr v-for="category in categories" :key="category.id" class="hover:bg-gray-50 transition-colors">
+            <td class="p-3 text-gray-500">{{ category.id }}</td>
+            <td class="p-3 font-medium text-gray-900">{{ category.title }}</td>
+            <td class="p-3 text-gray-600">{{ category.image_url }}</td>
           </tr>
         </tbody>
       </table>
@@ -30,23 +26,19 @@
   </div>
 </template>
 
-// тут css
 <style> 
 </style>
 
 <script setup lang="ts">
 
-
-interface Product {
+interface Category {
   id: number;
   title: string;
-  body: string;
-  old_price: number;
-  price: number;
+  image_url: string;
 }
 
 // Вказуємо що цей компонент приймає масив товарів ззовні
 defineProps<{
-  products: Product[]
+  categories: Category[]
 }>();
 </script>
