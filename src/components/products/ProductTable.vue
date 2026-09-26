@@ -8,6 +8,7 @@
           <th>ID</th>
           <th>Назва</th>
           <th>Опис</th>
+          <th>Стара ціна</th>
           <th>Ціна</th>
         </tr>
       </thead>
@@ -17,7 +18,8 @@
           <td>{{ product.id }}</td>
           <td>{{ product.title }}</td>
           <td>{{ product.body }}</td>
-          <td>{{ product.price }}</td>
+          <td>{{ product.old_price / 100}}</td>
+          <td>{{ product.price / 100}}</td>
         </tr>
       </tbody>
     </table>
@@ -35,6 +37,7 @@ interface Product {
   id: number;
   title: string;
   body: string;
+  old_price: number;
   price: number;
 }
 
