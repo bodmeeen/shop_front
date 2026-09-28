@@ -1,35 +1,52 @@
 <template>
-  <div class="p-5">
-    <h2 class="text-2xl font-bold mb-5">Управління товарами</h2>
+  <div class="p-5 max-w-7xl mx-auto">
+    <h2 class="text-2xl font-bold mb-5 text-gray-800">Управління БД</h2>
     
-    <!-- Вставлення форми. Коли збережено, викликається loadProducts -->
-    <ProductForm @productCreated="loadProducts" />
-    <hr class="my-8 border-gray-300" />
-    
-    <!-- Вставлення таблиці, та передача в неї товарів -->
-    <ProductTable :products="products" />
-    <hr class="my-8 border-gray-300" />
+    <!-- Вкладки -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button 
+        @click="activeTab = 'products'"
+        :class="activeTab === 'products' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+        class="py-2 px-6 border-b-2 font-medium text-lg transition-colors"
+      >
+        Товари
+      </button>
+        <!-- @click="activeTab = ''" -->
+      <button 
+        
+      >
+        тут замість категорій додати іншу таблицю
+      </button>
 
-    <h2 class="text-2xl font-bold mb-5">Управління категоріями</h2>
-    <CategoryForm @categoryCreated="loadCategories" />
-    <hr class="my-8 border-gray-300" />
-    <CategoryTable :categories="categories" />
-    <hr class="my-8 border-gray-300" />
+    </div>
+
+    <!-- Показується тільки якщо activeTab === 'products' -->
+    <div v-if="activeTab === 'products'">
+      <ProductForm @productCreated="loadProducts" />
+      <hr class="my-8 border-gray-300" />
+      <ProductTable :products="products" />
+    </div>
+
+    <!-- <div v-if="activeTab === 'categories'">
+      <CategoryForm @categoryCreated="loadCategories" />
+      <hr class="my-8 border-gray-300" />
+      <CategoryTable :categories="categories" />
+    </div> -->
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-
 import ProductForm from './products/ProductForm.vue'
 import ProductTable from './products/ProductTable.vue'
-import CategoryForm from './categories/CategoryForm.vue'
-import CategoryTable from './categories/CategoryTable.vue'
+
+// Змінна, яка пам'ятає, яка вкладка зараз відкрита
+const activeTab = ref('products')
 
 const products = ref([])
-const categories = ref([])
-// Ф-я для get
+
 const loadProducts = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/products')
@@ -39,16 +56,7 @@ const loadProducts = async () => {
   }
 }
 
-const loadCategories = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/api/categories')
-    categories.value = await response.json()
-  } catch (err) {
-    console.error("Помилка завантаження категорій:", err)
-  }
-}
-
-// Завантаження таблиці при відкритті сторінки
-onMounted(loadProducts)
-onMounted(loadCategories)
+onMounted(() => {
+  loadProducts()
+  })
 </script>

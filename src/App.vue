@@ -16,7 +16,7 @@
       <!-- Роутер сам підставить сюди HomePage або AdminPage -->
       <router-view />
     </main>
-    <footer class="bg-gray-800 text-white-3  00 text-center py-6">
+    <footer class="bg-gray-600 text-white text-center py-6">
       <p>&copy; 2026</p>
     </footer>
   </div>
