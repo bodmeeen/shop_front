@@ -11,11 +11,13 @@
       >
         Товари
       </button>
-        <!-- @click="activeTab = ''" -->
-      <button 
         
+      <button 
+        @click="activeTab = 'users'"
+        :class="activeTab === 'users' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+        class="py-2 px-6 border-b-2 font-medium text-lg transition-colors"
       >
-        тут замість категорій додати іншу таблицю
+        Користувачі
       </button>
 
     </div>
@@ -24,14 +26,14 @@
     <div v-if="activeTab === 'products'">
       <ProductForm @productCreated="loadProducts" />
       <hr class="my-8 border-gray-300" />
-      <ProductTable :products="products" />
+      <ProductTable :products="products" @productDeleted="loadProducts" />
     </div>
 
-    <!-- <div v-if="activeTab === 'categories'">
-      <CategoryForm @categoryCreated="loadCategories" />
+    <div v-if="activeTab === 'users'">
+      <UserForm @userCreated="loadUsers" />
       <hr class="my-8 border-gray-300" />
-      <CategoryTable :categories="categories" />
-    </div> -->
+      <UserTable :users="users" @userDeleted="loadUsers" />
+    </div>
 
   </div>
 </template>
@@ -42,10 +44,15 @@ import { ref, onMounted } from 'vue'
 import ProductForm from './products/ProductForm.vue'
 import ProductTable from './products/ProductTable.vue'
 
+import UserForm from './users/UserForm.vue'
+import UserTable from './users/UserTable.vue'
+
+
 // Змінна, яка пам'ятає, яка вкладка зараз відкрита
 const activeTab = ref('products')
 
 const products = ref([])
+const users = ref([])
 
 const loadProducts = async () => {
   try {
@@ -56,7 +63,18 @@ const loadProducts = async () => {
   }
 }
 
+const loadUsers = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/users')
+    users.value = await response.json()
+  } catch (err) {
+    console.error("Помилка завантаження користувачів:", err)
+  }
+}
+
+
 onMounted(() => {
   loadProducts()
+  loadUsers()
   })
 </script>

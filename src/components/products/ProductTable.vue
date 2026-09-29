@@ -13,6 +13,8 @@
             <th class="p-3 border-b border-gray-200 font-semibold">Опис</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Стара ціна</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Ціна</th>
+            <th class="p-3 border-b border-gray-200 font-semibold">Статус</th>
+            <th class="p-3 border-b border-gray-200"></th>
           </tr>
         </thead>
         <!-- divide-y автоматично малює горизонтальні лінії між рядками таблиці -->
@@ -23,6 +25,14 @@
             <td class="p-3 text-gray-600">{{ product.body }}</td>
             <td class="p-3 text-gray-500 ">{{ product.old_price }}</td>
             <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
+            <td class="p-3 text-gray-600">{{ product.status }}</td>
+            <td class="text-center align-middle p-2">
+              <button
+               @click="deleteProduct(product.id)"
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors"> 
+                Видалити
+              </button>
+             </td>
           </tr>
         </tbody>
       </table>
@@ -36,6 +46,8 @@
 
 <script setup lang="ts">
 
+const emit = defineEmits(['productDeleted'])
+
 
 interface Product {
   id: number;
@@ -43,6 +55,27 @@ interface Product {
   body: string;
   old_price: number;
   price: number;
+  status: ''
+}
+
+async function deleteProduct(id: any) {
+    try { 
+    const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (response.ok) {
+      console.log("Товар усішно видалено")
+      emit('productDeleted')
+    } else {
+      console.error("Бекенд повернув помилку")
+    }
+  } catch (err) {
+      console.error("Помилка мережі: ", err)
+  }
 }
 
 // Вказуємо що цей компонент приймає масив товарів ззовні
