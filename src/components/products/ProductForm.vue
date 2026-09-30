@@ -12,7 +12,8 @@
           <input v-model="newProduct.status" placeholder="Статус" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
         </div>
         
-        <button @click="addProduct" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
+        <button @click="addProduct" 
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
           Зберегти
         </button>
       </div>

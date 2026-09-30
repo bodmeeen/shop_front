@@ -9,6 +9,7 @@
       <nav class="flex gap-4">
         <router-link to="/" class="text-blue-600 font-bold hover:underline">Вітрина</router-link>
         <router-link to="/admin" class="text-red-600 font-bold hover:underline">Адмінка</router-link>
+        <router-link to="/cart" class="text-yellow-600 font-bold hover:underline">Кошик</router-link>
       </nav>
     </header>
 

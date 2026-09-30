@@ -27,6 +27,12 @@
               <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">КАТЕГОРІЯ {{ product.category_id }}</h3>
               <h2 class="text-gray-900 title-font text-lg font-medium">{{ product.title }}</h2>
               <p class="mt-2 text-lg font-bold text-gray-900">{{ product.price / 100 }} грн</p>
+
+              <button
+                @click="addToCart(product)"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
+                В кошик
+              </button>
             </div>
             
           </div>
@@ -41,6 +47,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+
+import { useCart } from '../composables/userCart'
+const{ addToCart } = useCart()
+
+defineProps(['product'])
 
 interface Product {
   id: number;
