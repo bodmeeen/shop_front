@@ -19,6 +19,14 @@
       >
         Користувачі
       </button>
+      
+      <button 
+        @click="activeTab = 'orders'"
+        :class="activeTab === 'orders' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+        class="py-2 px-6 border-b-2 font-medium text-lg transition-colors"
+      >
+        Замовлення
+      </button>
 
     </div>
 
@@ -35,6 +43,9 @@
       <UserTable :users="users" @userDeleted="loadUsers" />
     </div>
 
+    <div v-if="activeTab === 'orders'">
+      <OrderTable :orders="orders" @orderDeleted="loadOrders" />
+    </div>
   </div>
 </template>
 
@@ -47,12 +58,14 @@ import ProductTable from './products/ProductTable.vue'
 import UserForm from './users/UserForm.vue'
 import UserTable from './users/UserTable.vue'
 
+import OrderTable from './orders/OrderTable.vue'
 
-// Змінна, яка пам'ятає, яка вкладка зараз відкрита
+
 const activeTab = ref('products')
 
 const products = ref([])
 const users = ref([])
+const orders = ref([])
 
 const loadProducts = async () => {
   try {
@@ -72,9 +85,18 @@ const loadUsers = async () => {
   }
 }
 
+const loadOrders = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/admin_orders')
+    orders.value = await response.json()
+  } catch (err) {
+    console.error("Помилка завантаження замовлень:", err)
+  }
+}
 
 onMounted(() => {
   loadProducts()
   loadUsers()
+  loadOrders()
   })
 </script>

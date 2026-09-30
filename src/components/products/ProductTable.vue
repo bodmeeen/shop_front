@@ -40,10 +40,6 @@
   </div>
 </template>
 
-// тут css
-<style> 
-</style>
-
 <script setup lang="ts">
 
 const emit = defineEmits(['productDeleted'])

@@ -24,7 +24,6 @@
             </a>
             
             <div class="p-5">
-              <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">КАТЕГОРІЯ {{ product.category_id }}</h3>
               <h2 class="text-gray-900 title-font text-lg font-medium">{{ product.title }}</h2>
               <p class="mt-2 text-lg font-bold text-gray-900">{{ product.price / 100 }} грн</p>
 

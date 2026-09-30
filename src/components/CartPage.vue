@@ -10,18 +10,42 @@
       <div v-for="item in cart" :key="item.id" class="border p-4 mb-2 flex justify-between">
         <div>
           <h3 class="font-bold">{{ item.title }}</h3>
-          <p>Ціна: {{ item.price }} грн</p>
+          <p>Ціна: {{ item.price / 100 }} грн</p>
         </div>
         <div class="font-bold">
           Кількість: {{ item.quantity }}
         </div>
+      </div>
+
+      <!-- Новий блок із загальною сумою та кнопкою -->
+      <div class="mt-6 flex justify-between items-center border-t pt-4">
+        <div class="text-xl font-bold">Разом: {{ totalPrice / 100}} грн</div>
+        <button 
+          @click="goToCheckout" 
+          class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded transition-colors"
+        >
+          Оформити замовлення
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useCart } from '../composables/userCart'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCart } from '../composables/userCart' // Твій шлях
 
 const { cart } = useCart()
+const router = useRouter()
+
+// Рахуємо загальну суму
+const totalPrice = computed(() => {
+  return cart.value.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)
+})
+
+// Переходимо на сторінку оформлення
+function goToCheckout() {
+  router.push('/checkout')
+}
 </script>

@@ -42,22 +42,18 @@
   </div>
 </template>
 
-// тут css
-<style> 
-</style>
-
 <script setup lang="ts">
 
 const emit = defineEmits(['userDeleted'])
 
 interface User {
-    id: number,
-    first_name: string,
-    last_name: string,
-    role: string,
-    email: string,
-    password_hash: string,
-    phone_number: string
+  id: number,
+  first_name: string,
+  last_name: string,
+  role: string,
+  email: string,
+  password_hash: string,
+  phone_number: string
 }
 
 async function deleteUser(id: any) {

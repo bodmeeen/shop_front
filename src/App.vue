@@ -1,9 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
-    <header class="p-5 bg-white shadow-sm flex items-center justify-between">
+    <header class="p-5 bg-gray-600 shadow-sm flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div class="w-8 h-8 bg-blue-600 rounded-lg"></div> 
-        <span class="text-xl font-bold text-gray-800">Магазин</span>
+        <span class="text-xl font-bold text-white">Магазин</span>
       </div>
 
       <nav class="flex gap-4">
