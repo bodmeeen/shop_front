@@ -7,13 +7,40 @@
     </div>
 
     <div v-else>
-      <div v-for="item in cart" :key="item.id" class="border p-4 mb-2 flex justify-between">
+      <div v-for="item in cart" :key="item.id" class="border p-4 mb-4 flex justify-between items-center rounded shadow-sm">
+        
         <div>
-          <h3 class="font-bold">{{ item.title }}</h3>
-          <p>Ціна: {{ item.price / 100 }} грн</p>
+          <h3 class="font-bold text-lg">{{ item.title }}</h3>
+          <p class="text-gray-600">Ціна: {{ item.price / 100 }} грн</p>
         </div>
-        <div class="font-bold">
-          Кількість: {{ item.quantity }}
+        
+        <!-- Керування к-стю та видаленням -->
+        <div class="flex items-center gap-4">
+          
+          <!-- Блок +- -->
+          <div class="flex items-center border rounded">
+            <button 
+              @click="decreaseQuantity(item)" 
+              class="px-3 py-1 hover:bg-gray-100 font-bold transition-colors"
+            >-</button>
+            
+            <span class="px-3 font-bold border-l border-r py-1">
+              {{ item.quantity }}
+            </span>
+            
+            <button 
+              @click="addToCart(item)" 
+              class="px-3 py-1 hover:bg-gray-100 font-bold transition-colors"
+            >+</button>
+          </div>
+
+          <button 
+            @click="removeFromCart(item)" 
+            class="text-red-500 hover:text-red-700 text-sm font-medium"
+          >
+            Видалити
+          </button>
+          
         </div>
       </div>
 
@@ -25,6 +52,14 @@
         >
           Оформити замовлення
         </button>
+        <div class="mt-6 flex justify-between items-center border-t pt-4">
+        <button 
+          @click="clearCart" 
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded transition-colors"
+        >
+          Очистити кошик
+        </button>
+      </div>
       </div>
     </div>
   </div>
@@ -35,9 +70,9 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCart } from '../composables/userCart'
 
-const { cart } = useCart()
-const router = useRouter()
 
+const { cart, addToCart, decreaseQuantity, removeFromCart, clearCart } = useCart()
+const router = useRouter()
 
 const totalPrice = computed(() => {
   return cart.value.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)

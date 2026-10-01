@@ -22,10 +22,25 @@ function addToCart (product: any) {
     }
 }
 
+function decreaseQuantity (product: any) {
+    const existingItem = cart.value.find((item: any) => item.id === product.id)
+    if (existingItem) {
+        if (existingItem.quantity > 1) {
+            existingItem.quantity -= 1
+        } else {
+            removeFromCart(product)
+        }
+    }
+}
+
+function removeFromCart (product: any) {
+    cart.value = cart.value.filter((item: any) => item.id !== product.id)
+}
+
 function clearCart() {
     cart.value = []
 }
 
 export function useCart() {
-    return { cart, addToCart, clearCart }
+    return { cart, addToCart, clearCart, removeFromCart, decreaseQuantity }
 }

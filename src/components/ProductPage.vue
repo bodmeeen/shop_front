@@ -21,7 +21,6 @@
         </div>
         
         <div class="flex items-center">
-          <!-- Виводимо ціну -->
           <span class="title-font font-medium text-2xl text-gray-900">{{ product.price / 100}} грн</span>
           
           <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
