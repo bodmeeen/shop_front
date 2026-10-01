@@ -51,7 +51,7 @@ interface Product {
   body: string;
   old_price: number;
   price: number;
-  status: ''
+  status: string
 }
 
 async function deleteProduct(id: any) {

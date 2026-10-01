@@ -2,7 +2,6 @@
   <div class="max-w-xl mx-auto p-5">
     <h2 class="text-3xl font-bold mb-6">Оформлення замовлення</h2>
 
-    <!-- Вікно подяки після успішної покупки -->
     <div v-if="orderSuccess" class="bg-green-100 text-green-800 p-6 rounded-lg text-center">
       <h3 class="text-2xl font-bold mb-2">Дякуємо за замовлення!</h3>
       <p>Ваше замовлення успішно створено.</p>
@@ -15,10 +14,9 @@
       Ваш кошик порожній. Немає чого оформлювати.
     </div>
 
-    <!-- Сама форма -->
     <div v-else class="bg-gray-50 p-6 rounded-lg shadow-sm border">
       <div class="mb-4 pb-4 border-b">
-        <p class="text-lg font-bold">До сплати: {{ totalPrice }} грн</p>
+        <p class="text-lg font-bold">До сплати: {{ totalPrice / 100}} грн</p>
       </div>
 
       <form @submit.prevent="submitOrder" class="space-y-4">

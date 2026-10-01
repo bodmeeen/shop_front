@@ -60,7 +60,6 @@ async function addProduct() {
       console.log("Товар усішно створено")
       newProduct.value = { title: '', body: '', old_price: null, price: null, status: ''}
       emit('productCreated')
-      // Тут треба оновлювати список товарів щоб новий з'явився в таблиці
     } else {
       console.error("Бекенд повернув помилку")
     }

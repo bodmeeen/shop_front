@@ -17,7 +17,6 @@
         </div>
       </div>
 
-      <!-- Новий блок із загальною сумою та кнопкою -->
       <div class="mt-6 flex justify-between items-center border-t pt-4">
         <div class="text-xl font-bold">Разом: {{ totalPrice / 100}} грн</div>
         <button 
@@ -34,17 +33,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCart } from '../composables/userCart' // Твій шлях
+import { useCart } from '../composables/userCart'
 
 const { cart } = useCart()
 const router = useRouter()
 
-// Рахуємо загальну суму
+
 const totalPrice = computed(() => {
   return cart.value.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)
 })
 
-// Переходимо на сторінку оформлення
 function goToCheckout() {
   router.push('/checkout')
 }

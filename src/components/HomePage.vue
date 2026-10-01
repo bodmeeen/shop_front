@@ -19,9 +19,13 @@
           
           <div class="border border-gray-200 rounded-lg bg-white overflow-hidden h-full">
             
-            <a class="block relative h-48 border-b border-gray-100">
-              <img alt="ecommerce" class="object-cover object-center w-full h-full block" src="https://dummyimage.com/420x260">
-            </a>
+            <router-link :to="`/product/${product.id}`" class="block overflow-hidden rounded-lg">
+              <img 
+                src="/rustacean-flat-happy.svg" 
+                alt="Фото іграшки" 
+                class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+              />
+            </router-link>
             
             <div class="p-5">
               <h2 class="text-gray-900 title-font text-lg font-medium">{{ product.title }}</h2>

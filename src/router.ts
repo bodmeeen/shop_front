@@ -3,6 +3,7 @@ import HomePage from './components/HomePage.vue'
 import AdminPage from './components/AdminPage.vue'
 import CartPage from './components/CartPage.vue'
 import CheckoutPage from './components/CheckoutPage.vue'
+import ProductPage from './components/ProductPage.vue'
 
 const routes = [
   {
@@ -24,7 +25,12 @@ const routes = [
     path: '/checkout',
     name: 'checkout',
     component: CheckoutPage
-  }
+  },
+  {
+  path: '/product/:id',
+  name: 'ProductPage',
+  component: ProductPage
+}
 ]
 
 const router = createRouter({

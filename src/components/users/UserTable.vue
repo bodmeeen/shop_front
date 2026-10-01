@@ -66,7 +66,7 @@ async function deleteUser(id: any) {
     })
 
     if (response.ok) {
-      console.log("Товар усішно видалено")
+      console.log("Користувача усішно видалено")
       emit('userDeleted')
     } else {
       console.error("Бекенд повернув помилку")
