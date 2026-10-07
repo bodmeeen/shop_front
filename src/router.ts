@@ -4,6 +4,7 @@ import AdminPage from './components/AdminPage.vue'
 import CartPage from './components/CartPage.vue'
 import CheckoutPage from './components/CheckoutPage.vue'
 import ProductPage from './components/ProductPage.vue'
+import Page404 from './components/Page404.vue'
 
 const routes = [
   {
@@ -30,7 +31,13 @@ const routes = [
   path: '/product/:id',
   name: 'ProductPage',
   component: ProductPage
-}
+  },
+  {
+  // Ловить всі шляхи яких не було в інших роутах
+  path: '/:pathMatch(.*)*',
+  name: 'Page404',
+  component: Page404
+  }
 ]
 
 const router = createRouter({
