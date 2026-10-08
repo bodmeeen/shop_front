@@ -27,12 +27,23 @@
             <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
             <td class="p-3 text-gray-600">{{ product.status }}</td>
             <td class="text-center align-middle p-2">
+              <!-- Показується кнопка "Відновити" якщо товару немає, і "Видалити" якщо інакше -->
               <button
-               @click="deleteProduct(product.id)"
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors"> 
+                v-if="product.status === 'немає в наявності'"
+                @click="restoreProduct(product.id)"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded transition-colors"
+              > 
+                Відновити
+              </button>
+
+              <button
+                v-else
+                @click="softDeleteProduct(product.id)"
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors"
+              > 
                 Видалити
               </button>
-             </td>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -42,8 +53,7 @@
 
 <script setup lang="ts">
 
-const emit = defineEmits(['productDeleted'])
-
+const emit = defineEmits(['productDeleted', 'productRestored'])
 
 interface Product {
   id: number;
@@ -54,10 +64,10 @@ interface Product {
   status: string
 }
 
-async function deleteProduct(id: any) {
+async function softDeleteProduct(id: any) {
     try { 
-    const response = await fetch(`http://localhost:3000/api/products/${id}`, {
-      method: 'DELETE',
+    const response = await fetch(`http://localhost:3000/api/products/${id}/archive`, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -66,6 +76,26 @@ async function deleteProduct(id: any) {
     if (response.ok) {
       console.log("Товар усішно видалено")
       emit('productDeleted')
+    } else {
+      console.error("Бекенд повернув помилку")
+    }
+  } catch (err) {
+      console.error("Помилка мережі: ", err)
+  }
+}
+
+async function restoreProduct(id: any) {
+    try { 
+    const response = await fetch(`http://localhost:3000/api/products/${id}/restore`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (response.ok) {
+      console.log("Товар усішно відновлено")
+      emit('productRestored')
     } else {
       console.error("Бекенд повернув помилку")
     }

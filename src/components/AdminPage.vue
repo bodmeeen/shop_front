@@ -34,7 +34,7 @@
     <div v-if="activeTab === 'products'">
       <ProductForm @productCreated="loadProducts" />
       <hr class="my-8 border-gray-300" />
-      <ProductTable :products="products" @productDeleted="loadProducts" />
+      <ProductTable :products="products" @productDeleted="loadProducts" @productRestored="loadProducts" />
     </div>
 
     <div v-if="activeTab === 'users'">

@@ -33,7 +33,7 @@ const routes = [
   component: ProductPage
   },
   {
-  // Ловить всі шляхи яких не було в інших роутах
+  // Ловить всі шляхи яких не було в інших роутах, завжди повинен бути останннім
   path: '/:pathMatch(.*)*',
   name: 'Page404',
   component: Page404

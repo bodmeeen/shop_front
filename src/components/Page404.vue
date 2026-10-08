@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col items-center justify-center py-20 px-4 text-center">
-    <!-- Велика цифра на фоні -->
     <div class="text-9xl font-extrabold text-gray-200 mb-6">404</div>
     
     <h1 class="text-3xl font-bold text-gray-800 mb-4">Сторінку не знайдено</h1>
