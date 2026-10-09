@@ -52,13 +52,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import ProductForm from './products/ProductForm.vue'
-import ProductTable from './products/ProductTable.vue'
+import ProductTable from '../../components/admin/products/ProductTable.vue'
+import ProductForm from '../../components/admin/products/ProductForm.vue'
 
-import UserForm from './users/UserForm.vue'
-import UserTable from './users/UserTable.vue'
+import OrderTable from '../../components/admin/orders/OrderTable.vue'
+import UserTable from '../../components/admin/users/UserTable.vue'
 
-import OrderTable from './orders/OrderTable.vue'
+import UserForm from '../../components/admin/users/UserForm.vue'
 
 
 const activeTab = ref('products')

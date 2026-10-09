@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from './components/HomePage.vue'
-import AdminPage from './components/AdminPage.vue'
-import CartPage from './components/CartPage.vue'
-import CheckoutPage from './components/CheckoutPage.vue'
-import ProductPage from './components/ProductPage.vue'
-import Page404 from './components/Page404.vue'
+import HomePage from './views/HomePage.vue'
+import AdminPage from './views/admin/AdminPage.vue'
+import CartPage from './views/CartPage.vue'
+import CheckoutPage from './views/CheckoutPage.vue'
+import ProductPage from './views/ProductPage.vue'
+import Page404 from './views/Page404.vue'
 
 const routes = [
   {
