@@ -14,7 +14,7 @@
             <th class="p-3 border-b border-gray-200 font-semibold">Прізвище клієнта</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Номер телефону</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Дані для доставки</th>
-            <th class="p-3 border-b border-gray-200 font-semibold">Занальна сума</th>
+            <th class="p-3 border-b border-gray-200 font-semibold">Загальна сума</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Статус</th>
             <th class="p-3 border-b border-gray-200"></th>
           </tr>
@@ -28,7 +28,7 @@
             <td class="p-3 text-gray-500 ">{{ order.customer_last_name }}</td>
             <td class="p-3 text-gray-600 font-bold">{{ order.customer_phone }}</td>
             <td class="p-3 text-gray-600">{{ order.delivery_info }}</td>
-            <td class="p-3 text-gray-600">{{ order.total_price }}</td>
+            <td class="p-3 text-gray-600">{{ order.total_price / 100}}</td>
             <td class="p-3 text-gray-600">{{ order.status }}</td>
             <!-- <td class="text-center align-middle p-2"> -->
               <!-- <button
