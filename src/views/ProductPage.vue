@@ -7,10 +7,11 @@
       ← Назад
     </button>
     
-    <div v-if="product" class="lg:w-4/5 mx-auto flex flex-wrap">
+    <div v-if="product && category" class="lg:w-4/5 mx-auto flex flex-wrap">
       <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src="/rustacean-flat-happy.svg">
       
       <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+        <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{category.title}}</h3>
         <h2 class="text-sm title-font text-gray-500 tracking-widest">Товар</h2>
         
         <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{ product.title }}</h1>
@@ -51,6 +52,7 @@ const route = useRoute()
 const router = useRouter()
 
 const product = ref<Product | null>(null)
+const category = ref<Category | null>(null)
 
 
 const goBack = () => {
@@ -60,12 +62,30 @@ const goBack = () => {
 interface Product {
   id: number;
   title: string;
+  category_id: number;
   body: string;
   old_price: number;
   price: number;
   status: string
 }
 
+interface Category {
+  id: number;
+  title: string;
+  image_url: string;
+}
+
+const loadCategory = async (categoryId: number) => {
+  try {
+    const id = route.params.id;
+
+    const response = await fetch(`http://localhost:3000/api/category_by_id/${categoryId}`)
+    category.value = await response.json()
+    
+  } catch (err) {
+    console.error("Помилка завантаження категорії:", err)
+  }
+}
 
 const loadProduct = async () => {
   try {
@@ -73,10 +93,14 @@ const loadProduct = async () => {
 
     const response = await fetch(`http://localhost:3000/api/get_product_by_id/${id}`)
     product.value = await response.json()
+    if (product.value && product.value.category_id) {
+      await loadCategory(product.value.category_id)
+    }
   } catch (err) {
     console.error("Помилка завантаження товару:", err)
   }
 }
+
 
 onMounted(() => {
   loadProduct()

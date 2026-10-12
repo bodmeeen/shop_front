@@ -6,6 +6,7 @@
         <!-- .number автоматично перетворює введений текст на число -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input v-model="newProduct.title" placeholder="Назва товару" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
+          <input v-model.number="newProduct.category_id" type="number" placeholder="Категорія" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newProduct.body" placeholder="Опис товару" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model.number="newProduct.old_price" type="number" placeholder="Стара ціна" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model.number="newProduct.price" type="number" placeholder="Ціна" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
@@ -28,6 +29,7 @@ const emit = defineEmits(['productCreated'])
 
 const newProduct = ref({
   title: '',
+  category_id: null,
   body: '',
   old_price: null,
   price: null,
@@ -37,6 +39,9 @@ const newProduct = ref({
 async function addProduct() {
     if (!newProduct.value.title || newProduct.value.title.trim() === '') {
       alert("Введіть назву товару");
+      return; }
+    if (!newProduct.value.category_id || newProduct.value.category_id === '') {
+      alert("Введіть id категорії товару");
       return; }
     if (!newProduct.value.body || newProduct.value.body.trim() === '') {
       alert("Введіть опис товару");
@@ -58,7 +63,7 @@ async function addProduct() {
 
     if (response.ok) {
       console.log("Товар усішно створено")
-      newProduct.value = { title: '', body: '', old_price: null, price: null, status: ''}
+      newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, status: ''}
       emit('productCreated')
     } else {
       console.error("Бекенд повернув помилку")

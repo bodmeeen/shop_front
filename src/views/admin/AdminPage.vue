@@ -34,7 +34,7 @@
     <div v-if="activeTab === 'products'">
       <ProductForm @productCreated="loadProducts" />
       <hr class="my-8 border-gray-300" />
-      <ProductTable :products="products" @productDeleted="loadProducts" @productRestored="loadProducts" />
+      <ProductTable :products="products" @productDeleted="loadProducts" @productRestored="loadProducts" :categories="categories" />
     </div>
 
     <div v-if="activeTab === 'users'">
@@ -66,6 +66,7 @@ const activeTab = ref('products')
 const products = ref([])
 const users = ref([])
 const orders = ref([])
+const categories = ref([])
 
 const loadProducts = async () => {
   try {
@@ -73,6 +74,15 @@ const loadProducts = async () => {
     products.value = await response.json()
   } catch (err) {
     console.error("Помилка завантаження товарів:", err)
+  }
+}
+
+const loadCategories = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/categories')
+    categories.value = await response.json()
+  } catch (err) {
+    console.error("Помилка завантаження категорій:", err)
   }
 }
 
@@ -98,5 +108,6 @@ onMounted(() => {
   loadProducts()
   loadUsers()
   loadOrders()
+  loadCategories()
   })
 </script>

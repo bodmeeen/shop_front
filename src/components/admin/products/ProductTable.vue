@@ -10,6 +10,7 @@
           <tr class="bg-gray-100 text-gray-600 text-sm uppercase tracking-wider">
             <th class="p-3 border-b border-gray-200 font-semibold">ID</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Назва</th>
+            <th class="p-3 border-b border-gray-200 font-semibold">Категорія</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Опис</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Стара ціна</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Ціна</th>
@@ -22,6 +23,7 @@
           <tr v-for="product in products" :key="product.id" class="hover:bg-gray-50 transition-colors">
             <td class="p-3 text-gray-500">{{ product.id }}</td>
             <td class="p-3 font-medium text-gray-900">{{ product.title }}</td>
+            <td class="p-3 text-gray-600">{{ getCategoryName(product.category_id) }}</td>
             <td class="p-3 text-gray-600">{{ product.body }}</td>
             <td class="p-3 text-gray-500 ">{{ product.old_price }}</td>
             <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
@@ -58,10 +60,16 @@ const emit = defineEmits(['productDeleted', 'productRestored'])
 interface Product {
   id: number;
   title: string;
+  category_id: number;
   body: string;
   old_price: number;
   price: number;
   status: string
+}
+
+interface Category {
+  id: number;
+  title: string;
 }
 
 async function softDeleteProduct(id: any) {
@@ -104,8 +112,14 @@ async function restoreProduct(id: any) {
   }
 }
 
+const getCategoryName = (id: number) => {
+  const category = props.categories?.find(c => c.id === id);
+  return category ? category.title : 'Невідомо';
+}
+
 // Вказуємо що цей компонент приймає масив товарів ззовні
-defineProps<{
-  products: Product[]
+const props = defineProps <{
+  products: Product[];
+  categories: Category[];
 }>();
 </script>
