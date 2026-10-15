@@ -32,8 +32,9 @@
       </div>
     </footer>
   </div>
+  <ToastContainer />
 </template>
 
 <script setup lang="ts">
-
+import ToastContainer from './ToastContainer.vue'
 </script>

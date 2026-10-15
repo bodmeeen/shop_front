@@ -29,13 +29,14 @@
             
             <div class="p-5">
               <h2 class="text-gray-900 title-font text-lg font-medium">{{ product.title }}</h2>
+              <h2 class="text-gray-600 title-font text-lg font-medium">{{ getCategoryName(product.category_id)}}</h2>
               <p class="mt-2 text-lg font-bold text-gray-900">{{ product.price / 100 }} грн</p>
 
-              <button
-                @click="addToCart(product)"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
-                В кошик
-              </button>
+            <button
+              @click="handleAddToCart(product)"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors">
+              В кошик
+            </button>
             </div>
             
           </div>
@@ -50,12 +51,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-
 import { useCart } from '../composables/userCart'
+import { useToast } from '@/composables/useToast'
+
 const{ addToCart } = useCart()
+const { addToast } = useToast()
 
-defineProps(['product'])
-
+// defineProps(['product', 'category'])
 interface Product {
   id: number;
   title: string;
@@ -63,14 +65,33 @@ interface Product {
   category_id: number;
 }
 
-// Збереження даних
+interface Category {
+  id: number;
+  title: string;
+}
+
 const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
+
+const getCategoryName = (categoryId: number) => {
+  const category = categories.value.find(c => c.id === categoryId);
+  return category ? category.title : 'Завантаження...';
+}
+
+const handleAddToCart = (product: Product) => {
+  addToCart(product)
+  addToast(`"${product.title}" додано до кошика!`, 'success')
+}
+
 
 // Функція, яка завантажить товари з бекенду при відкритті сторінки
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:3000/api/products')
-    products.value = await response.json()
+    const resProducts = await fetch('http://localhost:3000/api/products')
+    products.value = await resProducts.json()
+
+    const resCategories = await fetch('http://localhost:3000/api/categories')
+    categories.value = await resCategories.json()
   } catch (err) {
     console.error("Помилка завантаження вітрини:", err)
   }

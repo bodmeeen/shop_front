@@ -12,7 +12,6 @@
       
       <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
         <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{category.title}}</h3>
-        <h2 class="text-sm title-font text-gray-500 tracking-widest">Товар</h2>
         
         <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{ product.title }}</h1>
         
@@ -24,9 +23,9 @@
         <div class="flex items-center">
           <span class="title-font font-medium text-2xl text-gray-900">{{ product.price / 100}} грн</span>
           
-          <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
-            @click="addToCart(product)"
-            >
+          <button
+            @click="handleAddToCart(product)"
+            class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
             Додати в кошик
           </button>
         </div>
@@ -44,9 +43,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 
 import { useCart } from '../composables/userCart'
+
 const{ addToCart } = useCart()
+const { addToast } = useToast()
 
 const route = useRoute()
 const router = useRouter()
@@ -101,6 +103,10 @@ const loadProduct = async () => {
   }
 }
 
+const handleAddToCart = (product: Product) => {
+  addToCart(product)
+  addToast(`"${product.title}" додано до кошика!`, 'success')
+}
 
 onMounted(() => {
   loadProduct()
