@@ -10,6 +10,7 @@
         <router-link to="/" class="text-white font-bold hover:underline">Вітрина</router-link>
         <router-link to="/admin" class="text-green-600 font-bold hover:underline">Адмінка</router-link>
         <router-link to="/cart" class="text-white font-bold hover:underline">Кошик</router-link>
+        <router-link to="/register" class="text-white font-bold hover:underline">Реєстрація</router-link>
       </nav>
     </header>
 

@@ -63,7 +63,7 @@ async function addProduct() {
 
     if (response.ok) {
       console.log("Товар усішно створено")
-      newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, status: ''}
+      newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, status: '' }
       emit('productCreated')
     } else {
       console.error("Бекенд повернув помилку")

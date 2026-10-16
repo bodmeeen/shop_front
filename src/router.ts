@@ -8,6 +8,7 @@ import Page404 from './views/Page404.vue'
 import AboutUs from './views/AboutUs.vue'
 import Delivery from './views/Delivery.vue'
 import Contacts from './views/Contacts.vue'
+import RegistrationPage from './views/RegistrationPage.vue'
 
 const routes = [
   {
@@ -49,6 +50,11 @@ const routes = [
     path: '/contact',
     name: 'contacts',
     component: Contacts
+  },
+  {
+    path: '/register',
+    name: 'registration',
+    component: RegistrationPage
   },
   {
     // Ловить всі шляхи яких не було в інших роутах, завжди повинен бути останннім
