@@ -9,6 +9,7 @@ import AboutUs from './views/AboutUs.vue'
 import Delivery from './views/Delivery.vue'
 import Contacts from './views/Contacts.vue'
 import RegistrationPage from './views/RegistrationPage.vue'
+import LoginPage from './views/LoginPage.vue'
 
 const routes = [
   {
@@ -55,6 +56,11 @@ const routes = [
     path: '/register',
     name: 'registration',
     component: RegistrationPage
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginPage
   },
   {
     // Ловить всі шляхи яких не було в інших роутах, завжди повинен бути останннім

@@ -30,13 +30,6 @@
             <td class="p-3 text-gray-600">{{ order.delivery_info }}</td>
             <td class="p-3 text-gray-600">{{ order.total_price / 100}}</td>
             <td class="p-3 text-gray-600">{{ order.status }}</td>
-            <!-- <td class="text-center align-middle p-2"> -->
-              <!-- <button
-               @click="deleteOrder(order.id)"
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors"> 
-                Видалити
-              </button> -->
-             <!-- </td> -->
           </tr>
         </tbody>
       </table>
@@ -45,8 +38,6 @@
 </template>
 
 <script setup lang="ts">
-
-// const emit = defineEmits(['orderDeleted'])
 
 
 interface Order {
@@ -59,26 +50,6 @@ interface Order {
   total_price: number,
   status: string
 }
-
-// async function deleteOrder(id: any) {
-//     try { 
-//     const response = await fetch(`http://localhost:3000/api/orders/${id}`, {
-//       method: 'DELETE',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       }
-//     })
-
-//     if (response.ok) {
-//       console.log("Замовлення усішно видалено")
-//       emit('orderDeleted')
-//     } else {
-//       console.error("Бекенд повернув помилку")
-//     }
-//   } catch (err) {
-//       console.error("Помилка мережі: ", err)
-//   }
-// }
 
 // Вказуємо що цей компонент приймає масив товарів ззовні
 defineProps<{

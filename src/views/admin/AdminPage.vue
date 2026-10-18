@@ -28,6 +28,14 @@
         Замовлення
       </button>
 
+      <button 
+        @click="activeTab = 'categories'"
+        :class="activeTab === 'categories' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+        class="py-2 px-6 border-b-2 font-medium text-lg transition-colors"
+      >
+        Категорії
+      </button>
+
     </div>
 
     <!-- Показується тільки якщо activeTab === 'products' -->
@@ -44,9 +52,14 @@
     </div>
 
     <div v-if="activeTab === 'orders'">
-      <OrderTable :orders="orders" @orderDeleted="loadOrders" />
+      <OrderTable :orders="orders" />
+    </div>
+    
+    <div v-if="activeTab === 'categories'">
+      <CategoryTable :categories="categories" />
     </div>
   </div>
+    
 </template>
 
 <script setup lang="ts">
@@ -56,11 +69,13 @@ import ProductTable from '../../components/admin/products/ProductTable.vue'
 import ProductForm from '../../components/admin/products/ProductForm.vue'
 
 import OrderTable from '../../components/admin/orders/OrderTable.vue'
-import UserTable from '../../components/admin/users/UserTable.vue'
 
+import UserTable from '../../components/admin/users/UserTable.vue'
 import UserForm from '../../components/admin/users/UserForm.vue'
 
+import CategoryTable from '../../components/admin/categories/CategoryTable.vue'
 
+// Стандартне значення
 const activeTab = ref('products')
 
 const products = ref([])

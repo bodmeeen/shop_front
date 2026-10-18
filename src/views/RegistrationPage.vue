@@ -1,10 +1,10 @@
 <template>
   <div class="max-w-xl mx-auto p-5">
-    <h2 class="text-3xl font-bold mb-6">Оформлення замовлення</h2>
+    <h2 class="text-3xl font-bold mb-6">Реєстрація</h2>
 
     <div v-if="isRegistered" class="bg-green-100 text-green-800 p-6 rounded-lg text-center">
       <h3 class="text-2xl font-bold mb-2">Реєстрація успішна!</h3>
-      <p>Ваш акаунт створено.</p>
+      <p>Ваш акаунт створено</p>
       <router-link to="/" class="mt-4 inline-block text-blue-600 hover:underline">
         Повернутися на головну
       </router-link>
@@ -21,8 +21,8 @@
         </div>
         
         <div>
-          <label class="block text-sm font-medium mb-1">Прізвище</label>
-          <input v-model="newUser.lastName" type="text" required class="w-full border p-2 rounded" />
+          <label class="block text-sm font-medium mb-1">Електронна адреса</label>
+          <input v-model="newUser.email" type="text" required class="w-full border p-2 rounded" />
         </div>
 
         <div>
@@ -31,13 +31,9 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-1">Електронна адреса</label>
-          <input v-model="newUser.email" type="text" required class="w-full border p-2 rounded" />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Номер телефону</label>
-          <input v-model="newUser.phone" type="text" required class="w-full border p-2 rounded" placeholder="+380..." />
+          <!-- Тут потрібно додати повторне введення пароля для його перевірки перед відправкою в бд -->
+          <label class="block text-sm font-medium mb-1">Введіть пароль ще раз</label>
+          <!-- <input v-model="newUser.password" type="password" required class="w-full border p-2 rounded" /> -->
         </div>
 
         <button 
@@ -59,11 +55,8 @@ const emit = defineEmits(['userCreated'])
 
 const newUser = ref({
   firstName: '',
-  lastName: '',
-  role: '',
   email: '',
   password: '',
-  phone: '',
 })
 
 const isSubmitting = ref(false)
@@ -75,11 +68,8 @@ async function addUser() {
 
   const payload = { 
     first_name: newUser.value.firstName,
-    last_name: newUser.value.lastName,
-    role: "user",
     email: newUser.value.email,
     password: newUser.value.password,
-    phone_number: newUser.value.phone,
   }
   try { 
     const response = await fetch('http://localhost:3000/api/users_reg', {
