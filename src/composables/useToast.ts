@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-// Можливі типи повіломлень
+// Можливі типи повідомлень
 export type ToastType = 'success' | 'error' | 'info'
 
 export interface Toast {

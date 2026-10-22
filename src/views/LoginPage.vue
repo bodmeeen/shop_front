@@ -46,6 +46,16 @@ const loginUser = ref({
   password: '',
 })
 
+interface LoginResponse {
+  status: string;
+  data: {
+    token: string;
+    user: {
+      email: string;
+    }
+  }
+}
+
 const isSubmitting = ref(false)
 const isConfirmed = ref(false)
 
@@ -56,7 +66,7 @@ async function authUser() {
     email: loginUser.value.email,
     password: loginUser.value.password,
   }
-  try { 
+try { 
     const response = await fetch('http://localhost:3000/api/users_login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -64,12 +74,17 @@ async function authUser() {
     })
 
     if (response.ok) {
-      isConfirmed.value = true
+      const responseData = (await response.json()) as LoginResponse;
+      
+      localStorage.setItem('token', responseData.data.token);
+      localStorage.setItem('userEmail', responseData.data.user.email); 
+
+      isConfirmed.value = true;
     } else {
-      const errorData = await response.json()
-      alert(`Помилка: ${errorData.message}`)
+      const errorData = await response.json() as { message: string }; 
+      alert(`Помилка: ${errorData.message}`);
     }
-  } catch (error) {
+    } catch (error) {
     console.error('Помилка мережі:', error)
     alert('Помилка з\'єднання з сервером')
   } finally {

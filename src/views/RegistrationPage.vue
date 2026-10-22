@@ -84,6 +84,7 @@ async function addUser() {
       const errorData = await response.json()
       alert(`Помилка: ${errorData.message}`)
     }
+    
   } catch (error) {
     console.error('Помилка мережі:', error)
     alert('Помилка з\'єднання з сервером')
