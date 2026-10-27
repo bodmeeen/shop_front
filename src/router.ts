@@ -10,6 +10,7 @@ import Delivery from './views/Delivery.vue'
 import Contacts from './views/Contacts.vue'
 import RegistrationPage from './views/RegistrationPage.vue'
 import LoginPage from './views/LoginPage.vue'
+import CategoryView from './views/CategoryView.vue'
 
 const routes = [
   {
@@ -58,9 +59,15 @@ const routes = [
     component: RegistrationPage
   },
   {
-    path: "/login",
-    name: "login",
+    path: '/login',
+    name: 'login',
     component: LoginPage
+  },
+  {
+    path: '/category/:id',
+    name: 'category',
+    component: CategoryView,
+    alias: ['/get_products_by_category_id/:id']
   },
   {
     // Ловить всі шляхи яких не було в інших роутах, завжди повинен бути останннім
