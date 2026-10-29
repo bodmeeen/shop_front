@@ -2,14 +2,13 @@
     <div style="margin-bottom: 20px;">
       <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-8">
         <h3>Додати товар</h3>
-        <!-- v-model пов'язує надрукований текст зі змінною newProduct.title -->
-        <!-- .number автоматично перетворює введений текст на число -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input v-model="newProduct.title" placeholder="Назва товару" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model.number="newProduct.category_id" type="number" placeholder="Категорія" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newProduct.body" placeholder="Опис товару" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model.number="newProduct.old_price" type="number" placeholder="Стара ціна" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model.number="newProduct.price" type="number" placeholder="Ціна" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
+          <input v-model.number="newProduct.quantity" type="quantity" placeholder="Кількість" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newProduct.status" placeholder="Статус" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
         </div>
         
@@ -33,6 +32,7 @@ const newProduct = ref({
   body: '',
   old_price: null,
   price: null,
+  quantity: null,
   status: ''
 })
 
@@ -49,6 +49,9 @@ async function addProduct() {
     if (!newProduct.value.price || newProduct.value.price < 0) {
       alert("Введіть ціну товару");
       return; }
+    if (!newProduct.value.quantity || newProduct.value.quantity < 0) {
+      alert("Введіть кількість товару");
+      return; }
     if (!newProduct.value.status || newProduct.value.status.trim() === '') {
       alert("Введіть статус товару");
       return; }
@@ -63,7 +66,7 @@ async function addProduct() {
 
     if (response.ok) {
       console.log("Товар усішно створено")
-      newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, status: '' }
+      newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, quantity: null, status: '' }
       emit('productCreated')
     } else {
       console.error("Бекенд повернув помилку")

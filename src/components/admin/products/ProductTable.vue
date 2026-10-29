@@ -14,6 +14,7 @@
             <th class="p-3 border-b border-gray-200 font-semibold">Опис</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Стара ціна</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Ціна</th>
+            <th class="p-3 border-b border-gray-200 font-semibold">Кількість</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Статус</th>
             <th class="p-3 border-b border-gray-200"></th>
           </tr>
@@ -27,6 +28,7 @@
             <td class="p-3 text-gray-600">{{ product.body }}</td>
             <td class="p-3 text-gray-500 ">{{ product.old_price }}</td>
             <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
+            <td class="p-3 text-gray-500 font-bold">{{ product.quantity }}</td>
             <td class="p-3 text-gray-600">{{ product.status }}</td>
             <td class="text-center align-middle p-2">
               <!-- Показується кнопка "Відновити" якщо товару немає, і "Видалити" якщо інакше -->
@@ -46,6 +48,25 @@
                 Видалити
               </button>
             </td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="changeQuantity(product, product.quantity - 1)" 
+                  :disabled="product.quantity === 0"
+                  class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded font-bold disabled:opacity-50"
+                >
+                  -
+                </button>
+
+                <span class="w-8 text-center font-medium">{{ product.quantity }}</span>
+                <button 
+                  @click="changeQuantity(product, product.quantity + 1)"
+                  class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded font-bold"
+                >
+                  +
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -57,12 +78,34 @@
 
 const emit = defineEmits(['productDeleted', 'productRestored'])
 
+const changeQuantity = async (product: any, newQuantity: number) => {
+  if (newQuantity < 0) return; // Захист від мінуса
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/admin/products/${product.id}/quantity`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantity: newQuantity })
+    });
+
+    if (response.ok) {
+      // Якщо бек успішно зберіг, оновити цифру на екрані
+      product.quantity = newQuantity;
+    } else {
+      console.error("Помилка на сервері");
+    }
+  } catch (err) {
+    console.error("Помилка мережі:", err);
+  }
+}
+
 interface Product {
   id: number;
   title: string;
   category_id: number;
   body: string;
   old_price: number;
+  quantity: number;
   price: number;
   status: string
 }
@@ -117,7 +160,6 @@ const getCategoryName = (id: number) => {
   return category ? category.title : 'Невідомо';
 }
 
-// Вказуємо що цей компонент приймає масив товарів ззовні
 const props = defineProps <{
   products: Product[];
   categories: Category[];

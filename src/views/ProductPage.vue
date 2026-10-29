@@ -21,12 +21,18 @@
         </div>
         
         <div class="flex items-center">
-          <span class="title-font font-medium text-2xl text-gray-900">{{ product.price / 100}} грн</span>
+          <span class="title-font font-medium text-2xl text-gray-900">{{ (product.price / 100).toFixed(2) }} грн</span>
           
           <button
             @click="handleAddToCart(product)"
-            class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
-            Додати в кошик
+            :disabled="product.quantity === 0"
+            :class="[
+              'flex ml-auto border-0 py-2 px-6 focus:outline-none rounded transition-colors',
+              product.quantity === 0 
+                ? 'bg-gray-400 text-gray-100 cursor-not-allowed' 
+                : 'text-white bg-indigo-500 hover:bg-indigo-600'
+            ]">
+            {{ product.quantity === 0 ? 'Немає в наявності' : 'Додати в кошик' }}
           </button>
         </div>
       </div>
@@ -47,7 +53,7 @@ import { useToast } from '@/composables/useToast'
 
 import { useCart } from '../composables/userCart'
 
-const{ addToCart } = useCart()
+const { addToCart } = useCart()
 const { addToast } = useToast()
 
 const route = useRoute()
@@ -68,7 +74,8 @@ interface Product {
   body: string;
   old_price: number;
   price: number;
-  status: string
+  quantity: number;
+  status: string;
 }
 
 interface Category {
