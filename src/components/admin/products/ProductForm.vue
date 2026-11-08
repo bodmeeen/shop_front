@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import api from '@/axios'
 
 // Передача подій в App.vue
 const emit = defineEmits(['productCreated'])
@@ -55,16 +56,10 @@ async function addProduct() {
     if (!newProduct.value.status || newProduct.value.status.trim() === '') {
       alert("Введіть статус товару");
       return; }
-  try { 
-    const response = await fetch('http://localhost:3000/api/products', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newProduct.value)
-    })
+  try {
+    const response = await api.post('/admin/products', newProduct.value)
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       console.log("Товар усішно створено")
       newProduct.value = { title: '', category_id: null, body: '', old_price: null, price: null, quantity: null, status: '' }
       emit('productCreated')

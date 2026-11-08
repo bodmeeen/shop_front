@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import api from '@/axios'
 
 const emit = defineEmits(['userConfirmed'])
 
@@ -52,6 +53,7 @@ interface LoginResponse {
     token: string;
     user: {
       email: string;
+      role: string;
     }
   }
 }
@@ -66,27 +68,23 @@ async function authUser() {
     email: loginUser.value.email,
     password: loginUser.value.password,
   }
-try { 
-    const response = await fetch('http://localhost:3000/api/users_login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
+  
+  try { 
+    // axios замість fetch
+    const response = await api.post<LoginResponse>('/users_login', payload)
 
-    if (response.ok) {
-      const responseData = (await response.json()) as LoginResponse;
+    // Axios сам розпаковує JSON
+    const { token, user } = response.data.data;
       
-      localStorage.setItem('token', responseData.data.token);
-      localStorage.setItem('userEmail', responseData.data.user.email); 
+    localStorage.setItem('token', token);
+    localStorage.setItem('userEmail', user.email); 
+    localStorage.setItem('userRole', user.role);
 
-      isConfirmed.value = true;
-    } else {
-      const errorData = await response.json() as { message: string }; 
-      alert(`Помилка: ${errorData.message}`);
-    }
-    } catch (error) {
-    console.error('Помилка мережі:', error)
-    alert('Помилка з\'єднання з сервером')
+    isConfirmed.value = true;
+  } catch (error: any) {
+    console.error('Помилка:', error)
+    const msg = error.response?.data?.message || 'Помилка з\'єднання з сервером';
+    alert(`Помилка: ${msg}`)
   } finally {
     isSubmitting.value = false
   }

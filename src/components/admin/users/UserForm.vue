@@ -5,7 +5,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <input v-model="newUser.first_name" placeholder="Ім'я користувача" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newUser.last_name" placeholder="Прізвище користувача" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
-          <input v-model="newUser.role" placeholder="Роль" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
+          <input v-model="newUser.role" placeholder="Роль (по дефолту ''customer'')" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newUser.email" placeholder="Електронна адреса" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newUser.password_hash" placeholder="Хеш пароля" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
           <input v-model="newUser.phone_number" placeholder="Номер телефону" class="border border-gray-300 rounded p-2 focus:outline-none focus:border-blue-500" />
@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import api from '@/axios'
 
 // Передача подій
 const emit = defineEmits(['userCreated'])
@@ -40,16 +41,10 @@ async function addUser() {
     if (!newUser.value.last_name || newUser.value.last_name.trim() === '') {
       alert("Введіть прізвище користувача");
       return; }
-  try { 
-    const response = await fetch('http://localhost:3000/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newUser.value)
-    })
+  try {
+    const response = await api.post('/users', newUser.value)
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       console.log("Користувача успішно додано")
       newUser.value = { first_name: '', last_name: '', role: '', email: '', password_hash: '', phone_number: ''}
       emit('userCreated')

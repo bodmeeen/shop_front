@@ -16,7 +16,8 @@
             <th class="p-3 border-b border-gray-200 font-semibold">Ціна</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Кількість</th>
             <th class="p-3 border-b border-gray-200 font-semibold">Статус</th>
-            <th class="p-3 border-b border-gray-200"></th>
+            <th class="p-3 border-b border-gray-200">Змінити видимість</th>
+            <th class="p-3 border-b border-gray-200">Змінити кількість</th>
           </tr>
         </thead>
         <!-- divide-y автоматично малює горизонтальні лінії між рядками таблиці -->
@@ -31,9 +32,9 @@
             <td class="p-3 text-gray-500 font-bold">{{ product.quantity }}</td>
             <td class="p-3 text-gray-600">{{ product.status }}</td>
             <td class="text-center align-middle p-2">
-              <!-- Показується кнопка "Відновити" якщо товару немає, і "Видалити" якщо інакше -->
+              <!-- Показується кнопка "Відновити" якщо товар прихований, і "Приховати" якщо інакше -->
               <button
-                v-if="product.status === 'немає в наявності'"
+                v-if="product.status === 'hidden'"
                 @click="restoreProduct(product.id)"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded transition-colors"
               > 
@@ -45,7 +46,7 @@
                 @click="softDeleteProduct(product.id)"
                 class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded transition-colors"
               > 
-                Видалити
+                Приховати
               </button>
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -75,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/axios'
 
 const emit = defineEmits(['productDeleted', 'productRestored'])
 
@@ -82,13 +84,11 @@ const changeQuantity = async (product: any, newQuantity: number) => {
   if (newQuantity < 0) return; // Захист від мінуса
 
   try {
-    const response = await fetch(`http://localhost:3000/api/admin/products/${product.id}/quantity`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quantity: newQuantity })
+    const response = await api.patch(`/admin/products/${product.id}/quantity`, {
+      quantity: newQuantity
     });
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       // Якщо бек успішно зберіг, оновити цифру на екрані
       product.quantity = newQuantity;
     } else {
@@ -116,15 +116,10 @@ interface Category {
 }
 
 async function softDeleteProduct(id: any) {
-    try { 
-    const response = await fetch(`http://localhost:3000/api/products/${id}/archive`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    try {
+    const response = await api.patch(`/products/${id}/archive`)
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       console.log("Товар усішно видалено")
       emit('productDeleted')
     } else {
@@ -136,15 +131,10 @@ async function softDeleteProduct(id: any) {
 }
 
 async function restoreProduct(id: any) {
-    try { 
-    const response = await fetch(`http://localhost:3000/api/products/${id}/restore`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    try {
+    const response = await api.patch(`/products/${id}/restore`)
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       console.log("Товар усішно відновлено")
       emit('productRestored')
     } else {

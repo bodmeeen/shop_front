@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import api from '@/axios'
 
 const emit = defineEmits(['userDeleted'])
 
@@ -56,16 +57,15 @@ interface User {
   phone_number: string
 }
 
-async function deleteUser(id: any) {
-    try { 
-    const response = await fetch(`http://localhost:3000/api/users/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+async function deleteUser(id: number) {
 
-    if (response.ok) {
+  if (!window.confirm("Ви точно хочете видалити цього користувача? Цю дію неможливо скасувати.")) {
+    return;
+  }
+  try {
+    const response = await api.delete(`/users/${id}`)
+
+    if (response.status >= 200 && response.status < 300) {
       console.log("Користувача усішно видалено")
       emit('userDeleted')
     } else {
