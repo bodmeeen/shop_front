@@ -28,7 +28,7 @@
             <td class="p-3 text-gray-500 ">{{ order.customer_last_name }}</td>
             <td class="p-3 text-gray-600 font-bold">{{ order.customer_phone }}</td>
             <td class="p-3 text-gray-600">{{ order.delivery_info }}</td>
-            <td class="p-3 text-gray-600">{{ order.total_price / 100}}</td>
+            <td class="p-3 text-gray-600">{{ order.total_price / 100}} грн</td>
             <td class="p-3 text-gray-600">{{ order.status }}</td>
           </tr>
         </tbody>

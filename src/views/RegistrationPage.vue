@@ -22,7 +22,7 @@
         
         <div>
           <label class="block text-sm font-medium mb-1">Електронна адреса</label>
-          <input v-model="newUser.email" type="text" required class="w-full border p-2 rounded" />
+          <input v-model="newUser.email" type="text" required class="w-full border p-2 rounded" /> <!-- Змінити type на email коли не треба буде тестувати -->
         </div>
 
         <div>
@@ -31,15 +31,34 @@
         </div>
 
         <div>
-          <!-- Тут потрібно додати повторне введення пароля для його перевірки перед відправкою в бд -->
-          <label class="block text-sm font-medium mb-1">Введіть пароль ще раз</label>
-          <!-- <input v-model="newUser.password" type="password" required class="w-full border p-2 rounded" /> -->
+          <div class="flex justify-between items-end mb-1">
+            <label class="block text-sm font-medium">Введіть пароль ще раз</label>
+            <!-- Текст перевірки, з'являється тільки якщо користувач почав вводити другий пароль -->
+            <span 
+              v-if="confirmPassword.length > 0" 
+              class="text-xs font-bold"
+              :class="passwordsMatch ? 'text-green-600' : 'text-red-500'"
+            >
+              {{ passwordsMatch ? ' Паролі збігаються' : ' Паролі не збігаються' }}
+            </span>
+          </div>
+          
+          <input 
+            v-model="confirmPassword" 
+            type="password" 
+            required 
+            class="w-full border p-2 rounded transition-colors focus:outline-none focus:ring-2"
+            :class="[
+              confirmPassword.length === 0 ? 'border-gray-200' : 
+              passwordsMatch ? 'border-green-500 focus:ring-green-200' : 'border-red-500 focus:ring-red-200'
+            ]"
+          />
         </div>
 
         <button 
           type="submit" 
-          :disabled="isSubmitting"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors disabled:bg-blue-300 mt-4"
+          :disabled="isSubmitting || (confirmPassword.length > 0 && !passwordsMatch)"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded transition-colors disabled:bg-blue-300 mt-4 disabled:cursor-not-allowed"
         >
           {{ isSubmitting ? 'Відправка...' : 'Підтвердити' }}
         </button>
@@ -49,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const emit = defineEmits(['userCreated'])
 
@@ -59,11 +78,22 @@ const newUser = ref({
   password: '',
 })
 
+const confirmPassword = ref('')
+
 const isSubmitting = ref(false)
 const isRegistered = ref(false)
 
+const passwordsMatch = computed(() => {
+  return newUser.value.password === confirmPassword.value
+})
 
 async function addUser() {
+  // Додатковий захист перед відправкою
+  if (newUser.value.password !== confirmPassword.value) {
+    alert('Паролі не збігаються!')
+    return
+  }
+
   isSubmitting.value = true;
 
   const payload = { 
@@ -71,6 +101,7 @@ async function addUser() {
     email: newUser.value.email,
     password: newUser.value.password,
   }
+  
   try { 
     const response = await fetch('http://localhost:3000/api/users_reg', {
       method: 'POST',

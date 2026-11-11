@@ -27,8 +27,8 @@
             <td class="p-3 font-medium text-gray-900">{{ product.title }}</td>
             <td class="p-3 text-gray-600">{{ getCategoryName(product.category_id) }}</td>
             <td class="p-3 text-gray-600">{{ product.body }}</td>
-            <td class="p-3 text-gray-500 ">{{ product.old_price }}</td>
-            <td class="p-3 text-gray-600 font-bold">{{ product.price }}</td>
+            <td class="p-3 text-gray-500 ">{{ product.old_price / 100}} грн</td>
+            <td class="p-3 text-gray-600 font-bold">{{ product.price / 100}} грн</td>
             <td class="p-3 text-gray-500 font-bold">{{ product.quantity }}</td>
             <td class="p-3 text-gray-600">{{ product.status }}</td>
             <td class="text-center align-middle p-2">

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 mt-6">
+  <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 mt-6 relative">
     <h1 class="text-3xl font-bold text-gray-900 mb-8">Особистий кабінет</h1>
 
     <div class="flex flex-col md:flex-row gap-8">
@@ -59,10 +59,10 @@
           </div>
         </div>
 
+        <!-- Вкладка Історія замовлень -->
         <div v-if="activeTab === 'orders'">
           <h2 class="text-xl font-bold text-gray-900 mb-6">Ваші замовлення</h2>
           
-          <!-- Якщо замовлень немає -->
           <div v-if="orders.length === 0" class="text-center py-12">
             <svg class="mx-auto h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -73,7 +73,6 @@
             </router-link>
           </div>
 
-          <!-- Якщо замовлення є (з вертикальним скролом) -->
           <div v-else class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
             <div 
               v-for="order in orders" 
@@ -83,21 +82,18 @@
               <div>
                 <div class="flex items-center gap-3 mb-1">
                   <span class="font-bold text-gray-900 text-lg">Замовлення #{{ order.id }}</span>
-                  <span 
-                    :class="getStatusColor(order.status)" 
-                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                  >
+                  <span :class="getStatusColor(order.status)" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">
                     {{ order.status }}
                   </span>
                 </div>
                 <div class="text-sm text-gray-500 mt-2 space-y-1">
                   <p>Дата: <span class="text-gray-700 font-medium">{{ formatDate(order.created_at) }}</span></p>
-                  <p>Сума: <span class="text-gray-900 font-bold">{{ order.total_price }} грн</span></p>
+                  <p>Сума: <span class="text-gray-900 font-bold">{{ order.total_price / 100 }} грн</span></p>
                 </div>
               </div>
 
               <button 
-                @click="viewOrderDetails(order.id)"
+                @click="openOrderDetails(order.id)"
                 class="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 font-medium transition-colors whitespace-nowrap"
               >
                 Деталі
@@ -105,10 +101,59 @@
             </div>
           </div>
         </div>
-
       </main>
-
     </div>
+
+    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+        
+        <div class="flex justify-between items-center p-6 border-b border-gray-200">
+          <h3 class="text-xl font-bold text-gray-900">
+            Деталі замовлення #{{ selectedOrderId }}
+          </h3>
+          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-1">
+          <div v-if="isLoadingDetails" class="flex justify-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+          
+          <div v-else-if="orderDetails">
+            <div class="mb-6 bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
+              <p><span class="font-semibold">Отримувач:</span> {{ orderDetails.order.customer_first_name }} {{ orderDetails.order.customer_last_name }}</p>
+              <p><span class="font-semibold">Телефон:</span> {{ orderDetails.order.customer_phone }}</p>
+              <p><span class="font-semibold">Доставка:</span> {{ orderDetails.order.delivery_info }}</p>
+            </div>
+
+            <h4 class="font-bold text-gray-900 mb-3">Товари:</h4>
+            <ul class="divide-y divide-gray-200 border-t border-b border-gray-200">
+              <li v-for="item in orderDetails.items" :key="item.product_id" class="py-3 flex justify-between items-center">
+                <div>
+                  <p class="font-medium text-gray-900">{{ item.title }}</p>
+                  <p class="text-sm text-gray-500">Кількість: {{ item.quantity }} шт. <span class="mx-1">|</span> Арт: {{ item.product_id }}</p>
+                </div>
+                <div class="font-bold text-gray-900">
+                  {{ item.price_at_purchase / 100 }} грн
+                </div>
+              </li>
+            </ul>
+
+            <div class="mt-6 flex justify-end">
+              <p class="text-lg">
+                Всього: <span class="font-bold text-2xl text-gray-900 ml-2">{{ orderDetails.order.total_price / 100 }} грн</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -144,6 +189,19 @@ interface Order {
   created_at: string;
 }
 
+interface OrderItem {
+  order_id: number;
+  product_id: number;
+  quantity: number;
+  price_at_purchase: number;
+  title: string; 
+}
+
+const isModalOpen = ref(false);
+const isLoadingDetails = ref(false);
+const selectedOrderId = ref<number | null>(null);
+const orderDetails = ref<{ order: Order; items: OrderItem[] } | null>(null);
+
 const orders = ref<Order[]>([]);
 
 const fetchOrders = async () => {
@@ -159,25 +217,42 @@ onMounted(() => {
   fetchOrders();
 });
 
-// Форматування дати з бази даних
 const formatDate = (dateString: string) => {
   if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleDateString('uk-UA'); 
 };
 
-// Кольори статусу
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case 'доставлено': return 'bg-green-100 text-green-800';
     case 'в обробці': return 'bg-blue-100 text-blue-800';
     case 'скасовано': return 'bg-red-100 text-red-800';
+    case 'new': return 'bg-yellow-100 text-yellow-800';
     default: return 'bg-gray-200 text-gray-800';
   }
 };
 
-const viewOrderDetails = (orderId: number) => {
-  console.log('Відкриваємо деталі замовлення:', orderId);
-  // Тут потрібно буде доробити
+const openOrderDetails = async (orderId: number) => {
+  selectedOrderId.value = orderId;
+  isModalOpen.value = true;
+  isLoadingDetails.value = true;
+  orderDetails.value = null;
+
+  try {
+    const response = await api.get(`/orders/${orderId}`);
+    orderDetails.value = response.data.data;
+  } catch (error) {
+    console.error('Помилка при завантаженні деталей:', error);
+    alert('Не вдалося завантажити деталі замовлення');
+    isModalOpen.value = false;
+  } finally {
+    isLoadingDetails.value = false;
+  }
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+  selectedOrderId.value = null;
 };
 </script>
