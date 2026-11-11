@@ -11,6 +11,7 @@ import Contacts from './views/Contacts.vue'
 import RegistrationPage from './views/RegistrationPage.vue'
 import LoginPage from './views/LoginPage.vue'
 import CategoryView from './views/CategoryView.vue'
+import UserAccount from './views/UserAccount.vue'
 
 const routes = [
   {
@@ -64,6 +65,12 @@ const routes = [
     component: LoginPage
   },
   {
+    path: '/profile',
+    name: 'profile',
+    component: UserAccount,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/category/:id',
     name: 'category',
     component: CategoryView,
@@ -80,6 +87,17 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const hasToken = !!localStorage.getItem('token');
+
+  // Якщо сторінка вимагає авторизації, а токена немає
+  if (to.meta.requiresAuth && !hasToken) {
+    next('/login'); // Перекидання на сторінку логіна
+  } else {
+    next();
+  }
 })
 
 export default router

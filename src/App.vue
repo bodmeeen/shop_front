@@ -11,13 +11,8 @@
         <router-link to="/cart" class="text-white font-bold hover:underline">Кошик</router-link>
         <router-link to="/register" class="text-white font-bold hover:underline">Реєстрація</router-link>
         <router-link to="/login" class="text-white font-bold hover:underline">Вхід</router-link>
+        <router-link to="/profile" class="text-white font-bold hover:underline">Кабінет користувача</router-link>
         <router-link to="/admin" class="text-green-600 font-bold hover:underline">Адмінка</router-link>
-        <button
-          @click="logout"
-          class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded transition-colors"
-        > 
-          Вихід
-        </button>
       </nav>
     </header>
 
@@ -49,11 +44,4 @@ import ToastContainer from './ToastContainer.vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-const logout = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userRole');
-  localStorage.removeItem('userEmail');
-  router.push('/login');
-};
 </script>

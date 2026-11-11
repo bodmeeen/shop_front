@@ -55,6 +55,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useCart } from '../composables/userCart'
+import axios from 'axios';
+import api from '@/axios';
 
 const { cart, clearCart } = useCart()
 
@@ -89,22 +91,26 @@ async function submitOrder() {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-
-    if (response.ok) {
-      orderSuccess.value = true 
-      clearCart()
+    // Перевірка чи є токен в localStorage
+    const hasToken = !!localStorage.getItem('token');
+    
+    // Відправка запиту незалежно від того чи зареєстрований користувач
+    if (hasToken) {
+      // Якщо юзер залогінений, використовується api який сам додасть токен у заголовки
+      await api.post('http://localhost:3000/api/orders', payload);
     } else {
-      const errorData = await response.json()
-      alert(`Помилка: ${errorData.message}`)
+      // Якщо це гість, використовується звичайний axios (без токенів)
+      await axios.post('http://localhost:3000/api/orders', payload);
     }
-  } catch (error) {
-    console.error('Помилка мережі:', error)
-    alert('Помилка з\'єднання з сервером')
+
+    orderSuccess.value = true 
+    clearCart()
+
+  } catch (error: any) {
+    console.error('Помилка при створенні замовлення:', error)
+    
+    const errorMessage = error.response?.data?.message || 'Помилка з\'єднання з сервером'
+    alert(`Помилка: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }
