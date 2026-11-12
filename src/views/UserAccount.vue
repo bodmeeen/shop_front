@@ -34,32 +34,93 @@
       <main class="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
         
         <div v-if="activeTab === 'info'">
-          <h2 class="text-xl font-bold text-gray-900 mb-6">Ваша інформація</h2>
+          <div class="flex justify-between items-center mb-6">
+             <h2 class="text-xl font-bold text-gray-900">Ваша інформація</h2>
+          </div>
           
-          <div class="space-y-4 max-w-md">
+          <div v-if="!isEditingProfile" class="space-y-4 max-w-md">
             <div>
-              <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+              <label class="block text-sm font-medium text-gray-500 mb-1">Ім'я</label>
               <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">
-                {{ userEmail }}
+                {{ userProfile.firstName || 'Не вказано' }}
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-500 mb-1">Роль</label>
-              <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 capitalize">
-                {{ userRole === 'admin' ? 'Адміністратор' : 'Покупець' }}
+              <label class="block text-sm font-medium text-gray-500 mb-1">Прізвище</label>
+              <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">
+                {{ userProfile.lastName || 'Не вказано' }}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-500 mb-1">Телефон</label>
+              <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">
+                 {{ userProfile.phoneNumber || 'Не вказано' }}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+              <div class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">
+                {{ userProfile.email }}
               </div>
             </div>
 
             <div class="pt-6 mt-6 border-t border-gray-100">
-              <button class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+              <button @click="startEditingProfile" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
                 Редагувати дані
               </button>
             </div>
           </div>
+
+          <form v-else @submit.prevent="saveProfile" class="space-y-4 max-w-md">
+            
+            <div v-if="profileUpdateMessage" :class="[profileUpdateSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800', 'p-3 rounded-lg text-sm mb-4']">
+               {{ profileUpdateMessage }}
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Ім'я</label>
+              <input v-model="editProfileData.firstName" type="text" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-200 focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Прізвище</label>
+              <input v-model="editProfileData.lastName" type="text" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-200 focus:outline-none" />
+            </div>
+
+             <div>
+              <label class="block text-sm font-medium mb-1">Телефон</label>
+              <input v-model="editProfileData.phoneNumber" type="text" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-200 focus:outline-none" placeholder="+380..." />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Email <span class="text-red-500">*</span></label>
+              <input v-model="editProfileData.email" type="email" required class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-200 focus:outline-none" />
+            </div>
+
+            <div class="pt-4 mt-6 border-t border-gray-100 flex gap-3">
+              <button 
+                type="submit" 
+                :disabled="isSavingProfile"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+              >
+                {{ isSavingProfile ? 'Збереження...' : 'Зберегти' }}
+              </button>
+              
+              <button 
+                type="button" 
+                @click="cancelEditingProfile"
+                :disabled="isSavingProfile"
+                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+              >
+                Скасувати
+              </button>
+            </div>
+          </form>
         </div>
 
-        <!-- Вкладка Історія замовлень -->
         <div v-if="activeTab === 'orders'">
           <h2 class="text-xl font-bold text-gray-900 mb-6">Ваші замовлення</h2>
           
@@ -127,7 +188,7 @@
             <div class="mb-6 bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
               <p><span class="font-semibold">Отримувач:</span> {{ orderDetails.order.customer_first_name }} {{ orderDetails.order.customer_last_name }}</p>
               <p><span class="font-semibold">Телефон:</span> {{ orderDetails.order.customer_phone }}</p>
-              <p><span class="font-semibold">Доставка:</span> {{ orderDetails.order.delivery_info }}</p>
+              <p><span class="font-semibold">Адреса доставки:</span> {{ orderDetails.order.delivery_info }}</p>
             </div>
 
             <h4 class="font-bold text-gray-900 mb-3">Товари:</h4>
@@ -166,14 +227,136 @@ const router = useRouter();
 
 const activeTab = ref('info');
 
-const userEmail = ref(localStorage.getItem('userEmail') || 'Невідомо');
 const userRole = ref(localStorage.getItem('userRole') || 'customer');
+
+const getUserIdFromToken = () => {
+  const storedUserId = localStorage.getItem('userId');
+  if (storedUserId) return storedUserId;
+
+  const token = localStorage.getItem('token');
+  if (!token) return '';
+
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return '';
+
+    const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const payload = JSON.parse(atob(padded));
+
+    return payload.sub ? String(payload.sub) : '';
+  } catch {
+    return '';
+  }
+};
+
+const userProfile = ref({
+  firstName: '',
+  lastName: '',
+  email: localStorage.getItem('userEmail') || '',
+  phoneNumber: ''
+});
+
+const isEditingProfile = ref(false);
+const isSavingProfile = ref(false);
+const profileUpdateMessage = ref('');
+const profileUpdateSuccess = ref(false);
+
+const editProfileData = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phoneNumber: ''
+});
+
+const userId = ref(getUserIdFromToken());
+
+const fetchUserProfile = async () => {
+    const currentUserId = getUserIdFromToken();
+    userId.value = currentUserId;
+
+    if (!currentUserId) return;
+
+    localStorage.setItem('userId', currentUserId);
+
+    try {
+        const response = await api.get(`/users/${currentUserId}`);
+        
+        const userData = response.data.data.user || response.data.data;
+        
+        userProfile.value = {
+            firstName: userData.first_name || '',
+            lastName: userData.last_name || '',
+            email: userData.email || '',
+            phoneNumber: userData.phone_number || ''
+        };
+        
+        localStorage.setItem('userEmail', userProfile.value.email);
+        
+    } catch (error) {
+        console.error('Помилка завантаження профілю:', error);
+    }
+};
+
+const startEditingProfile = () => {
+    profileUpdateMessage.value = '';
+    editProfileData.value = { ...userProfile.value };
+    isEditingProfile.value = true;
+};
+
+const cancelEditingProfile = () => {
+    isEditingProfile.value = false;
+    profileUpdateMessage.value = '';
+};
+
+const saveProfile = async () => {
+    if(!userId.value) return;
+    
+    isSavingProfile.value = true;
+    profileUpdateMessage.value = '';
+
+    const payload = {
+        first_name: editProfileData.value.firstName || null,
+        last_name: editProfileData.value.lastName || null,
+        email: editProfileData.value.email || null,
+        phone_number: editProfileData.value.phoneNumber || null
+    };
+
+    try {
+        const response = await api.put(`/users/${userId.value}`, payload);
+        
+        const updatedUser = response.data.data.user;
+        
+        userProfile.value = {
+            firstName: updatedUser.first_name || '',
+            lastName: updatedUser.last_name || '',
+            email: updatedUser.email || '',
+            phoneNumber: updatedUser.phone_number || ''
+        };
+        
+        localStorage.setItem('userEmail', userProfile.value.email);
+        
+        profileUpdateSuccess.value = true;
+        profileUpdateMessage.value = 'Дані успішно оновлено';
+        
+        setTimeout(() => {
+            isEditingProfile.value = false;
+        }, 1500);
+        
+    } catch (error: any) {
+        profileUpdateSuccess.value = false;
+        profileUpdateMessage.value = error.response?.data?.message || 'Помилка при збереженні даних';
+    } finally {
+        isSavingProfile.value = false;
+    }
+};
 
 const logout = () => {
   if (confirm('Ви впевнені, що хочете вийти?')) {
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('userId'); 
     router.push('/login');
   }
 };
@@ -215,6 +398,7 @@ const fetchOrders = async () => {
 
 onMounted(() => {
   fetchOrders();
+  fetchUserProfile(); 
 });
 
 const formatDate = (dateString: string) => {

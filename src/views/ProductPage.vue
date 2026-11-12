@@ -88,7 +88,7 @@ const loadCategory = async (categoryId: number) => {
   try {
     const id = route.params.id;
 
-    const response = await fetch(`http://localhost:3000/api/category_by_id/${categoryId}`)
+    const response = await fetch(`http://localhost:3000/api/categories/${categoryId}`)
     category.value = await response.json()
     
   } catch (err) {
@@ -100,7 +100,7 @@ const loadProduct = async () => {
   try {
     const id = route.params.id;
 
-    const response = await fetch(`http://localhost:3000/api/get_product_by_id/${id}`)
+    const response = await fetch(`http://localhost:3000/api/products/${id}`)
     product.value = await response.json()
     if (product.value && product.value.category_id) {
       await loadCategory(product.value.category_id)

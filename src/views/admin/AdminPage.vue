@@ -116,7 +116,7 @@ const loadUsers = async () => {
 
 const loadOrders = async () => {
   try {
-    const response = await api.get('/admin_orders')
+    const response = await api.get('/admin/orders')
     orders.value = response.data
   } catch (err) {
     console.error("Помилка завантаження замовлень:", err)

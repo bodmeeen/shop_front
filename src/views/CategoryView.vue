@@ -79,7 +79,7 @@ onMounted(async () => {
   const categoryId = route.params.id
 
   try {
-    const resProducts = await fetch(`http://localhost:3000/api/get_products_by_category_id/${categoryId}`)
+    const resProducts = await fetch(`http://localhost:3000/api/products/category/${categoryId}`)
     products.value = await resProducts.json()
 
     const resCategories = await fetch('http://localhost:3000/api/categories')

@@ -74,7 +74,7 @@ const routes = [
     path: '/category/:id',
     name: 'category',
     component: CategoryView,
-    alias: ['/get_products_by_category_id/:id']
+    alias: ['/products/category/:id']
   },
   {
     // Ловить всі шляхи яких не було в інших роутах, завжди повинен бути останннім

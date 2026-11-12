@@ -61,6 +61,22 @@ interface LoginResponse {
 const isSubmitting = ref(false)
 const isConfirmed = ref(false)
 
+function getUserIdFromToken(token: string): string {
+  if (!token) return '';
+
+  const payloadPart = token.split('.')[1];
+  if (!payloadPart) return '';
+
+  try {
+    const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const payload = JSON.parse(atob(padded));
+    return payload.sub ? String(payload.sub) : '';
+  } catch {
+    return '';
+  }
+}
+
 async function authUser() {
   isSubmitting.value = true;
 
@@ -71,7 +87,7 @@ async function authUser() {
   
   try { 
     // axios замість fetch
-    const response = await api.post<LoginResponse>('/users_login', payload)
+    const response = await api.post<LoginResponse>('/users/login', payload)
 
     // Axios сам розпаковує JSON
     const { token, user } = response.data.data;
@@ -79,6 +95,11 @@ async function authUser() {
     localStorage.setItem('token', token);
     localStorage.setItem('userEmail', user.email); 
     localStorage.setItem('userRole', user.role);
+
+    const userId = getUserIdFromToken(token);
+    if (userId) {
+      localStorage.setItem('userId', userId);
+    }
 
     isConfirmed.value = true;
   } catch (error: any) {

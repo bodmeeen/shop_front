@@ -69,6 +69,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import api from '@/axios'
+
+const router = useRouter()
 
 const emit = defineEmits(['userCreated'])
 
@@ -82,6 +86,22 @@ const confirmPassword = ref('')
 
 const isSubmitting = ref(false)
 const isRegistered = ref(false)
+
+function getUserIdFromToken(token: string): string {
+  if (!token) return '';
+
+  const payloadPart = token.split('.')[1];
+  if (!payloadPart) return '';
+
+  try {
+    const normalized = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const payload = JSON.parse(atob(padded));
+    return payload.sub ? String(payload.sub) : '';
+  } catch {
+    return '';
+  }
+}
 
 const passwordsMatch = computed(() => {
   return newUser.value.password === confirmPassword.value
@@ -103,22 +123,24 @@ async function addUser() {
   }
   
   try { 
-    const response = await fetch('http://localhost:3000/api/users_reg', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
+    const response = await api.post('/users/registration', payload)
+    const { token, user } = response.data.data
 
-    if (response.ok) {
-      isRegistered.value = true
-    } else {
-      const errorData = await response.json()
-      alert(`Помилка: ${errorData.message}`)
+    localStorage.setItem('token', token)
+    localStorage.setItem('userEmail', user.email)
+    localStorage.setItem('userRole', user.role)
+
+    const userId = getUserIdFromToken(token)
+    if (userId) {
+      localStorage.setItem('userId', userId)
     }
-    
-  } catch (error) {
-    console.error('Помилка мережі:', error)
-    alert('Помилка з\'єднання з сервером')
+
+    isRegistered.value = true
+    router.push('/profile')
+  } catch (error: any) {
+    console.error('Помилка реєстрації:', error)
+    const msg = error.response?.data?.message || 'Помилка з\'єднання з сервером'
+    alert(`Помилка: ${msg}`)
   } finally {
     isSubmitting.value = false
   }
