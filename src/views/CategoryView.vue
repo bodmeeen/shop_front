@@ -1,6 +1,6 @@
 <template>
   <section class="text-gray-600 body-font bg-gray-50 min-h-screen">
-    <div class="container px-5 py-24 mx-auto">
+    <div class="container px-4 sm:px-5 py-12 sm:py-20 md:py-24 mx-auto">
       
      <button 
         @click="goBack" 

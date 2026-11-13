@@ -1,5 +1,42 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: light;
+  --bg-page: #f3f7ff;
+  --bg-soft: #eef4ff;
+  --brand: #2563eb;
+  --brand-dark: #1d4ed8;
+  --ink: #0f172a;
+  --muted: #475569;
+  --card: #ffffff;
+  --line: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  font-family: Inter, 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(191, 219, 254, 0.35), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, var(--bg-page) 100%);
+  color: var(--ink);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+a {
+  transition: all 0.2s ease;
+}
+
 /* Прибрати стрілочки для Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -10,4 +47,11 @@ input::-webkit-inner-spin-button {
 /* Прибрати стрілочки для Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Невелика корекція для мобільних пристроїв, щоб контент не рвався по ширині */
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
 }

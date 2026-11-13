@@ -1,37 +1,80 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
-    <header class="p-5 bg-gray-800 shadow-sm flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg"></div> 
-        <span class="text-xl font-bold text-white">Магазин</span>
-      </div>
+    <header class="bg-slate-900 text-white shadow-soft border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-3 sm:px-5 py-3 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md"></div> 
+          <span class="text-lg sm:text-xl font-bold tracking-tight">Магазин</span>
+        </div>
 
-      <nav class="flex gap-4">
-        <router-link to="/" class="text-white font-bold hover:underline">Вітрина</router-link>
-        <router-link to="/cart" class="text-white font-bold hover:underline">Кошик</router-link>
-        <router-link to="/register" class="text-white font-bold hover:underline">Реєстрація</router-link>
-        <router-link to="/login" class="text-white font-bold hover:underline">Вхід</router-link>
-        <router-link to="/profile" class="text-white font-bold hover:underline">Кабінет користувача</router-link>
-        <router-link to="/admin" class="text-green-600 font-bold hover:underline">Адмінка</router-link>
-      </nav>
+        <nav class="flex flex-wrap items-center justify-end gap-2 sm:gap-4 md:gap-6">
+          <router-link to="/" class="text-slate-200 hover:text-white font-semibold text-sm sm:text-base">Вітрина</router-link>
+          <router-link to="/cart" class="text-slate-200 hover:text-white font-semibold text-sm sm:text-base">Кошик</router-link>
+          
+          <div class="relative" ref="dropdownRef">
+            <button 
+              @click="toggleDropdown"
+              class="flex items-center gap-1.5 text-slate-200 hover:text-white font-semibold focus:outline-none py-1 text-sm sm:text-base"
+            >
+              <span>Акаунт</span>
+              <svg 
+                :class="['w-4 h-4 transition-transform duration-200', isDropdownOpen ? 'rotate-180' : '']" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div v-if="isDropdownOpen" class="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-soft py-2 z-50 border border-slate-200 overflow-hidden">
+    
+            <!-- Завжди показується Кабінет -->
+            <router-link to="/profile" @click="closeDropdown" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50">
+              Кабінет користувача
+            </router-link>
+            
+            <!-- Якщо не залогінений -->
+            <template v-if="!isLoggedIn">
+              <router-link to="/login" @click="closeDropdown" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50">
+                Вхід
+              </router-link>
+              <router-link to="/register" @click="closeDropdown" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50">
+                Реєстрація
+              </router-link>
+            </template>
+
+            <!-- Якщо залогінений -->
+            <template v-else>
+              <div class="border-t border-slate-200 my-1"></div> <!-- Лінія-розділювач -->
+              <button @click="logout" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+                Вийти
+              </button>
+            </template>
+
+          </div>
+          </div>
+
+          <router-link to="/admin" class="text-emerald-400 hover:text-emerald-300 font-semibold text-sm sm:text-base">Адмінка</router-link>
+        </nav>
+      </div>
     </header>
 
     <main class="flex-grow">  
       <!-- Роутер сам підставить сюди HomePage або AdminPage -->
       <router-view />
     </main>
-    <footer class="bg-gray-800 text-gray-300 py-8 mt-auto">
-      <div class="container mx-auto flex flex-col items-center">
-        <div class="flex flex-wrap justify-center gap-6 mb-4">
-          <router-link to="/about_us" class="hover:text-white hover:underline transition-colors">Про нас</router-link>
-          <router-link to="/delivery" class="hover:text-white hover:underline transition-colors">Доставка</router-link>
-          <router-link to="/contact" class="hover:text-white hover:underline transition-colors">Контакти</router-link>
+
+    <footer class="bg-slate-900 text-slate-300 py-8 mt-auto border-t border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center">
+        <div class="flex flex-wrap justify-center gap-3 sm:gap-6 mb-4 text-sm sm:text-base">
+          <router-link to="/about_us" class="text-slate-300 hover:text-white hover:underline transition-colors">Про нас</router-link>
+          <router-link to="/delivery" class="text-slate-300 hover:text-white hover:underline transition-colors">Доставка</router-link>
+          <router-link to="/contact" class="text-slate-300 hover:text-white hover:underline transition-colors">Контакти</router-link>
         </div>
 
-        <p class="text-sm text-gray-400">
+        <p class="text-xs sm:text-sm text-slate-400 text-center">
           &copy; 2026 Магазин. Всі права захищено.
         </p>
-
       </div>
     </footer>
   </div>
@@ -39,9 +82,55 @@
 </template>
 
 <script setup lang="ts">
-import ToastContainer from './ToastContainer.vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import ToastContainer from './ToastContainer.vue';
+import router from './router.ts';
 
-import { useRouter } from 'vue-router';
+// Перевірка чи є токен
+const isLoggedIn = ref(false);
 
-const router = useRouter();
+const syncAuthState = () => {
+  isLoggedIn.value = !!localStorage.getItem('token');
+};
+
+const isDropdownOpen = ref(false);
+const dropdownRef = ref<HTMLElement | null>(null);
+
+const toggleDropdown = () => {
+  syncAuthState();
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false;
+};
+
+// Закрити випадаюче меню якщо клікнути поза його межами
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+    closeDropdown();
+  }
+};
+
+const logout = () => {
+  if (confirm('Ви впевнені, що хочете вийти?')) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId'); 
+    syncAuthState();
+    router.push('/login');
+  }
+};
+
+onMounted(() => {
+  syncAuthState();
+  document.addEventListener('click', handleClickOutside);
+  window.addEventListener('storage', syncAuthState);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+  window.removeEventListener('storage', syncAuthState);
+});
 </script>

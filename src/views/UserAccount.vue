@@ -403,8 +403,18 @@ onMounted(() => {
 
 const formatDate = (dateString: string) => {
   if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('uk-UA'); 
+  
+  // Z тут для того щоб браузер зрозумів що це UTC та сам перевір час
+  const safeDateString = dateString.includes('T') ? dateString : dateString.replace(' ', 'T') + 'Z';
+  const date = new Date(safeDateString);
+  
+  return date.toLocaleString('uk-UA', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }); 
 };
 
 const getStatusColor = (status: string) => {

@@ -1,37 +1,37 @@
 <template>
   <section class="text-gray-600 body-font bg-gray-50 min-h-screen">
-    <div class="container px-5 py-24 mx-auto">
+    <div class="container px-4 sm:px-5 py-12 sm:py-20 md:py-24 mx-auto">
       
-      <h2 class="text-2xl font-bold text-gray-900 mb-4 px-2">Категорії</h2>
+      <h2 class="text-2xl font-bold text-slate-900 mb-4 px-2">Категорії</h2>
       <div class="flex overflow-x-auto gap-4 mb-10 pb-4 px-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <router-link 
           v-for="category in categories" 
           :key="category.id"
           :to="`/category/${category.id}`"
-          class="flex-shrink-0 w-36 md:w-48 border border-gray-200 rounded-lg bg-white overflow-hidden hover:shadow-lg transition-shadow group block"
+          class="flex-shrink-0 w-36 md:w-48 border border-slate-200 rounded-2xl bg-white overflow-hidden hover:shadow-soft transition-all duration-300 group block"
         >
-          <div class="h-24 md:h-32 overflow-hidden bg-gray-100">
+          <div class="h-24 md:h-32 overflow-hidden bg-slate-100">
             <img 
               :src="category.image_url ? category.image_url : '/rustacean-flat-happy.svg'" 
               :alt="category.title" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-          <div class="p-3 text-center">
-            <h3 class="text-sm md:text-base font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+          <div class="p-3 text-center bg-gradient-to-b from-white to-slate-50">
+            <h3 class="text-sm md:text-base font-medium text-slate-800 group-hover:text-blue-600 transition-colors">
               {{ category.title }}
             </h3>
           </div>
         </router-link>
       </div>
 
-      <h2 class="text-2xl font-bold text-gray-900 mb-6 px-2">Всі товари</h2>
-      <div class="flex flex-wrap -m-4">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6 px-2">Всі товари</h2>
+      <div class="flex flex-wrap -mx-2 sm:-mx-3">
         
         <div 
           v-for="product in products" 
           :key="product.id" 
-          class="p-4 w-1/2 md:w-1/3 lg:w-1/4"
+          class="px-2 sm:px-3 py-3 w-1/2 md:w-1/3 lg:w-1/4"
         >
           <ProductCard 
             :product="product" 

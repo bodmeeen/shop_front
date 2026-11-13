@@ -36,6 +36,7 @@ const routes = [
   },
   {
     path: '/product/:id',
+    alias: ['/products/:id'],
     name: 'ProductPage',
     component: ProductPage
   },
