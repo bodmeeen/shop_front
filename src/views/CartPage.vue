@@ -23,8 +23,12 @@
       >
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-4 min-w-0">
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50">
-              <img src="/rustacean-flat-happy.svg" alt="Товар" class="h-12 w-12 object-contain" />
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 overflow-hidden">
+              <img
+                :src="resolveImageUrl(item.image_url)"
+                :alt="item.title"
+                class="h-full w-full object-cover"
+              />
             </div>
             <div class="min-w-0">
               <h3 class="truncate text-base sm:text-lg font-semibold text-slate-900">{{ item.title }}</h3>
@@ -96,6 +100,13 @@ const router = useRouter()
 const totalPrice = computed(() => {
   return cart.value.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)
 })
+
+function resolveImageUrl(imageUrl?: string | null) {
+  if (!imageUrl) return '/rustacean-flat-happy.svg'
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl
+  if (imageUrl.startsWith('/')) return `http://localhost:3000${imageUrl}`
+  return imageUrl
+}
 
 function goToCheckout() {
   router.push('/checkout')

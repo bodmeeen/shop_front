@@ -12,7 +12,7 @@
         >
           <div class="h-24 md:h-32 overflow-hidden bg-slate-100">
             <img 
-              :src="category.image_url ? category.image_url : '/rustacean-flat-happy.svg'" 
+              :src="resolveImageUrl(category.image_url)" 
               :alt="category.title" 
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
@@ -64,6 +64,13 @@ interface Category {
 
 const products = ref<Product[]>([])
 const categories = ref<Category[]>([])
+
+const resolveImageUrl = (imageUrl: string | null) => {
+  if (!imageUrl) return '/rustacean-flat-happy.svg'
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl
+  if (imageUrl.startsWith('/')) return `http://localhost:3000${imageUrl}`
+  return imageUrl
+}
 
 const getCategoryName = (categoryId: number) => {
   const category = categories.value.find(c => c.id === categoryId);

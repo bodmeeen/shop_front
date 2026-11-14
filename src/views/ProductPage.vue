@@ -10,7 +10,7 @@
     <div v-if="product && category">
       <!-- Основна картка товару -->
       <div class="lg:w-4/5 mx-auto flex flex-wrap bg-white rounded-3xl shadow-soft border border-slate-200 p-4 sm:p-6 lg:p-8">
-        <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-contain object-center rounded-2xl bg-slate-50 p-6" src="/rustacean-flat-happy.svg">
+        <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded-2xl bg-slate-50 p-6" :src="resolveImageUrl(product.image_url)">
         
         <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
           <h3 class="text-slate-500 text-xs tracking-[0.2em] uppercase mb-1">{{ category.title }}</h3>
@@ -54,7 +54,7 @@
               <img 
                 alt="product" 
                 class="w-full h-40 object-cover object-center rounded mb-4" 
-                src="/rustacean-flat-happy.svg"
+                :src="resolveImageUrl(simProduct.image_url)"
               >
               <h3 class="text-gray-900 font-medium text-lg group-hover:text-indigo-600 transition-colors line-clamp-1">
                 {{ simProduct.title }}
@@ -105,6 +105,13 @@ const product = ref<Product | null>(null)
 const category = ref<Category | null>(null)
 const similarProducts = ref<Product[]>([])
 
+const resolveImageUrl = (imageUrl?: string | null) => {
+  if (!imageUrl) return '/rustacean-flat-happy.svg'
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl
+  if (imageUrl.startsWith('/')) return `http://localhost:3000${imageUrl}`
+  return imageUrl
+}
+
 const goBack = () => {
   router.back()
 }
@@ -118,6 +125,7 @@ interface Product {
   price: number;
   quantity: number;
   status: string;
+  image_url?: string | null;
 }
 
 interface Category {

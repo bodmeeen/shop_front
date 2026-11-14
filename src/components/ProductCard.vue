@@ -6,9 +6,9 @@
     <div class="block overflow-hidden bg-slate-50">
       <div class="h-36 sm:h-40 md:h-44 lg:h-48 overflow-hidden">
         <img 
-          src="/rustacean-flat-happy.svg" 
+          :src="resolveImageUrl(product.image_url)" 
           alt="Фото іграшки" 
-          class="w-full h-full object-contain hover:scale-105 transition-transform duration-300 bg-white"
+          class="w-full h-full object-cover hover:scale-105 transition-transform duration-300 bg-white"
         />
       </div>
     </div>
@@ -41,7 +41,8 @@ export interface Product {
   title: string;
   price: number;
   category_id: number;
-  quantity: number; 
+  quantity: number;
+  image_url?: string | null;
 }
 
 const props = defineProps<{
@@ -50,6 +51,13 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+
+const resolveImageUrl = (imageUrl?: string | null) => {
+  if (!imageUrl) return '/rustacean-flat-happy.svg'
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl
+  if (imageUrl.startsWith('/')) return `http://localhost:3000${imageUrl}`
+  return imageUrl
+}
 
 const goToProduct = () => {
   router.push(`/product/${props.product.id}`)
